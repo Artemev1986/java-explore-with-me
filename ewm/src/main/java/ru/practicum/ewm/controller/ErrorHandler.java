@@ -1,4 +1,4 @@
-package ru.practicum.shareit.controller;
+package ru.practicum.ewm.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -6,36 +6,57 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.ErrorResponse;
-import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.StateNotValidException;
-import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.ewm.exception.ApiError;
+import ru.practicum.ewm.exception.NotFoundException;
+import ru.practicum.ewm.exception.StateNotValidException;
+import ru.practicum.ewm.exception.ValidationException;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
-    private final ErrorResponse errorResponse = new ErrorResponse();
+    private final ApiError apiError = new ApiError();
 
   @ExceptionHandler(value = {MethodArgumentNotValidException.class,
           ValidationException.class, StateNotValidException.class})
   public ResponseEntity<?> handleMethodArgumentNotValid(final Throwable e) {
-      errorResponse.setError(e.getMessage());
+      Arrays.stream(e.getStackTrace())
+              .map(StackTraceElement::toString)
+              .forEach(apiError.getErrors()::add);
+      apiError.setMessage(e.getMessage());
+      apiError.setReason("");
+      apiError.setStatus("BAD_REQUEST");
+      apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
       log.warn(String.valueOf(e));
-
-      return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+      return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler
   public ResponseEntity<?> handleNotFoundException(final NotFoundException e) {
-      errorResponse.setError(e.getMessage());
+      Arrays.stream(e.getStackTrace())
+              .map(StackTraceElement::toString)
+              .forEach(apiError.getErrors()::add);
+      apiError.setMessage(e.getMessage());
+      apiError.setReason("");
+      apiError.setStatus("NOT_FOUND");
+      apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
       log.warn(String.valueOf(e));
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+      return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
   }
 
   @ExceptionHandler
   public ResponseEntity<?> handleThrowable(final Throwable e) {
-      errorResponse.setError(e.getMessage());
+      Arrays.stream(e.getStackTrace())
+              .map(StackTraceElement::toString)
+              .forEach(apiError.getErrors()::add);
+      apiError.setMessage(e.getMessage());
+      apiError.setReason("");
+      apiError.setStatus("INTERNAL_SERVER_ERROR");
+      apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
       log.warn(String.valueOf(e));
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

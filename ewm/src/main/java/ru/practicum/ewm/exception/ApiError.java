@@ -2,7 +2,14 @@ package ru.practicum.ewm.exception;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
-public class ErrorResponse {
-    private String error;
+public class ApiError {
+    private List<String> errors = new ArrayList<>();
+    private String message;
+    private String reason;
+    private String status;
+    private String timestamp;
 }
