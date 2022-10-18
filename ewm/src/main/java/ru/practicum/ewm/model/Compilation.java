@@ -4,9 +4,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -29,7 +27,7 @@ public class Compilation {
             inverseJoinColumns = {@JoinColumn(name = "compilation_id")}
     )
     @ToString.Exclude
-    private Set<Event> events = new HashSet<>();
+    private List<Event> events = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS requests (
     request_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     created TIMESTAMP WITHOUT TIME ZONE,
     event_id BIGINT REFERENCES events(event_id) NOT NULL,
-    requestor_id BIGINT REFERENCES users(user_id) NOT NULL,
+    requester_id BIGINT REFERENCES users(user_id) NOT NULL,
     status VARCHAR(10),
-    CONSTRAINT uniq_event_requestor UNIQUE (event_id, requestor_id)
+    CONSTRAINT uniq_event_requester UNIQUE (event_id, requester_id)
 );

@@ -19,12 +19,10 @@ public class ParticipationRequest {
     private Long id;
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-    @ManyToOne
-    @JoinColumn(name = "requestor_id")
-    private User requestor;
+    @Column(name = "event_id")
+    private Long eventId;
+    @Column(name = "requester_id")
+    private Long requesterId;
     @Column(name = "status", nullable = false)
     private RequestStatus status;
 

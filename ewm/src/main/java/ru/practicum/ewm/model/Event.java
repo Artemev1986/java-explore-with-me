@@ -42,7 +42,7 @@ public class Event {
     private Boolean paid;
     @Column(name = "participant_limit", nullable = false)
     private Integer participantLimit;
-    @Column(name = "published_on", nullable = false)
+    @Column(name = "published_on")
     private LocalDateTime publishedOn;
     @Column(name = "is_request_moderation", nullable = false)
     private Boolean requestModeration;
