@@ -16,4 +16,6 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
     @Query("update ParticipationRequest req set req.status = 'REJECTED' where " +
             "req.eventId = :eventId AND req.status = 'PENDING'")
     long updateEventRequests(long eventId);
+
+    List<ParticipationRequest> findAllByRequesterId(long requesterId);
 }

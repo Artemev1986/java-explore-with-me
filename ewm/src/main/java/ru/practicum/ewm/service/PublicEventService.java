@@ -27,7 +27,7 @@ public class PublicEventService {
     private final EventRepository eventRepository;
 
     public List<EventShortDto> searchPublishedEvents(String text,
-                                                     List<Category> categories,
+                                                     List<Long> categories,
                                                      boolean paid,
                                                      LocalDateTime rangeStart,
                                                      LocalDateTime rangeEnd,

@@ -57,7 +57,7 @@ public class PrivateEventService {
     public EventFullDto updateEvent(long userId, UpdateEventRequest updateEventDto) {
         Event eventFromMemory = getEventById(updateEventDto.getEventId());
         if (!(eventFromMemory.getState() == EventState.PENDING || eventFromMemory.getState() == EventState.CANCELED)) {
-            throw new EventUpdateValidException("The event state not PENDING and not CANCELED");
+            throw new EventUpdateValidException("The event state must be PENDING or CANCELED");
         }
 
         getUserById(userId);
@@ -94,8 +94,8 @@ public class PrivateEventService {
 
     public EventFullDto cancelEvent(long eventId, long userId) {
         Event event = getEventById(eventId);
-        if (!(event.getState() == EventState.PENDING)) {
-            throw new EventUpdateValidException("The event state not PENDING or CANCELED already");
+        if (event.getState() != EventState.PENDING) {
+            throw new EventUpdateValidException("The event state must be PENDING");
         }
         getUserById(userId);
         if (userId != event.getInitiator().getId()) {

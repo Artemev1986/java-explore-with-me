@@ -1,13 +1,12 @@
 package ru.practicum.ewm.dto;
 
 import lombok.Data;
-import ru.practicum.ewm.model.Event;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class NewCompilationDto {
@@ -16,5 +15,5 @@ public class NewCompilationDto {
     @NotNull(message = "{pinned.notnull}")
     Boolean pinned;
     @NotEmpty(message = "{events.notempty}")
-    Set<Event> events = new HashSet<>();
+    List<Long> events = new ArrayList<>();
 }

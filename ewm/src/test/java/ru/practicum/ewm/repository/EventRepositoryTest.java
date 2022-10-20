@@ -76,7 +76,7 @@ class EventRepositoryTest {
     void searchEventByText() {
         List<Event> events = eventRepository.searchEventByText(
                 "anno",
-                List.of(category1,category2),
+                List.of(1L,2L),
                 true,
                 LocalDateTime.now().plusHours(2),
                 LocalDateTime.now().plusHours(5),
