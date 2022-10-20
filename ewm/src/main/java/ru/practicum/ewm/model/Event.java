@@ -35,7 +35,7 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn(name = "location_id")
     private Location location;
     @Column(name = "is_paid", nullable = false)

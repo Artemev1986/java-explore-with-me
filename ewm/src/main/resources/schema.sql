@@ -45,9 +45,9 @@ CREATE TABLE IF NOT EXISTS compilations (
 );
 
 CREATE TABLE IF NOT EXISTS event_compilations (
-    event_id BIGINT REFERENCES events(event_id) NOT NULL,
     compilation_id BIGINT REFERENCES compilations(compilation_id) NOT NULL,
-    CONSTRAINT uniq_event_compilation UNIQUE (event_id, compilation_id)
+    event_id BIGINT REFERENCES events(event_id) NOT NULL,
+    PRIMARY KEY (event_id, compilation_id)
 );
 
 CREATE TABLE IF NOT EXISTS requests (

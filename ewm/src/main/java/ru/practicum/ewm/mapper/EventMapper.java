@@ -61,7 +61,7 @@ public class EventMapper {
         return event;
     }
 
-    public static Event updateEvent(Event event, AdminUpdateEventRequest eventDto, Category category) {
+    public static Event adminUpdateEvent(Event event, AdminUpdateEventRequest eventDto, Category category) {
         event.setTitle(eventDto.getTitle());
         event.setAnnotation(eventDto.getAnnotation());
         event.setDescription(eventDto.getDescription());
@@ -71,6 +71,17 @@ public class EventMapper {
         event.setPaid(eventDto.getPaid());
         event.setParticipantLimit(eventDto.getParticipantLimit());
         event.setRequestModeration(eventDto.getRequestModeration());
+        return event;
+    }
+
+    public static Event updateEvent(Event event, UpdateEventRequest eventDto, Category category) {
+        event.setTitle(eventDto.getTitle());
+        event.setAnnotation(eventDto.getAnnotation());
+        event.setDescription(eventDto.getDescription());
+        event.setCategory(category);
+        event.setEventDate(eventDto.getEventDate());
+        event.setPaid(eventDto.getPaid());
+        event.setParticipantLimit(eventDto.getParticipantLimit());
         return event;
     }
 }
