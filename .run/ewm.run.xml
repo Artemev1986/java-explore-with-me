@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="EwmApplication" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="ru.practicum.ewm.EwmApplication" />
+  <configuration default="false" name="EwmApplication" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ru.yandex.practicum.ewm.EwmApplication" />
     <module name="ewm" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="ru.practicum.ewm.*" />
+        <option name="PATTERN" value="ru.yandex.practicum.ewm.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

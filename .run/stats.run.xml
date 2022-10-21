@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="StatsApplication" type="Application" factoryName="Application" nameIsGenerated="true">
-    <option name="MAIN_CLASS_NAME" value="ru.practicum.stats.StatsApplication" />
+  <configuration default="false" name="StatsApplication" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ru.yandex.practicum.stats.StatsApplication" />
     <module name="stats" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="ru.practicum.stats.*" />
+        <option name="PATTERN" value="ru.yandex.practicum.stats.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
