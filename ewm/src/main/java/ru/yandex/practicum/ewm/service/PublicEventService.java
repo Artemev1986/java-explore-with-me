@@ -33,8 +33,14 @@ public class PublicEventService {
                                                      boolean onlyAvailable,
                                                      SortParameter sort,
                                                      int from, int size) {
+        String sortParameter = "";
+        if (sort == SortParameter.EVENT_DATE) {
+            sortParameter = "eventDate";
+        } else if (sort == SortParameter.VIEWS) {
+            sortParameter = "views";
+        }
 
-        Pageable page = PageRequest.of(from / size, size, Sort.by(sort.toString()).ascending());
+        Pageable page = PageRequest.of(from / size, size, Sort.by(sortParameter).ascending());
 
         List<EventShortDto> eventsDto = eventRepository.searchEventByText(
                 text,

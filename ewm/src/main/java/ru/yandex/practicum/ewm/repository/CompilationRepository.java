@@ -1,6 +1,5 @@
 package ru.yandex.practicum.ewm.repository;
 
-import io.micrometer.core.lang.Nullable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

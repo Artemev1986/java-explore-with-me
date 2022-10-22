@@ -11,13 +11,12 @@ import ru.yandex.practicum.ewm.exception.EventUpdateValidException;
 import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.EventMapper;
 import ru.yandex.practicum.ewm.mapper.RequestMapper;
+import ru.yandex.practicum.ewm.model.*;
 import ru.yandex.practicum.ewm.repository.CategoryRepository;
 import ru.yandex.practicum.ewm.repository.EventRepository;
 import ru.yandex.practicum.ewm.repository.RequestRepository;
 import ru.yandex.practicum.ewm.repository.UserRepository;
-import ru.yandex.practicum.ewm.model.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,10 +44,6 @@ public class PrivateEventService {
         User initiator = getUserById(userId);
         Category category = getCategoryById(newEventDto.getCategory());
         Event event = EventMapper.toEven(newEventDto, category, initiator);
-        if (!event.getRequestModeration()) {
-            event.setPublishedOn(LocalDateTime.now());
-            event.setState(EventState.PUBLISHED);
-        }
         eventRepository.save(event);
         log.debug("Added new event with id: {}", event.getId());
         return EventMapper.toEventFullDto(event);

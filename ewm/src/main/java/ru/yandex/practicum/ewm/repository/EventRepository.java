@@ -19,8 +19,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND ev.category.id IN :categories  " +
             "AND ev.state = 'PUBLISHED' " +
             "AND ev.paid = :paid " +
-            "AND (:rangeStart IS NOT NULL AND ev.eventDate >= :rangeStart OR :rangeStart IS NULL AND ev.eventDate >= CURRENT_TIMESTAMP) " +
-            "AND (:rangeEnd IS NOT NULL AND ev.eventDate <= :rangeEnd  OR :rangeEnd IS NULL) " +
+            "AND (ev.eventDate >= :rangeStart) " +
+            "AND (ev.eventDate <= :rangeEnd) " +
             "AND (UPPER(ev.annotation) LIKE UPPER(CONCAT('%',:text,'%')) " +
             "OR UPPER(ev.description) LIKE UPPER(CONCAT('%',:text,'%'))) "
     )
@@ -40,8 +40,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "ev.initiator.id IN :users  " +
             "AND ev.state IN :states  " +
             "AND ev.category.id IN :categories  " +
-            "AND (:rangeStart IS NOT NULL AND ev.eventDate >= :rangeStart OR :rangeStart IS NULL AND ev.eventDate >= CURRENT_TIMESTAMP) " +
-            "AND (:rangeEnd IS NOT NULL AND ev.eventDate <= :rangeEnd  OR :rangeEnd IS NULL) "
+            "AND (ev.eventDate >= :rangeStart) " +
+            "AND (ev.eventDate <= :rangeEnd) "
     )
     List<Event> getEventsAdmin(List<Long> users,
                                List<Long> categories,

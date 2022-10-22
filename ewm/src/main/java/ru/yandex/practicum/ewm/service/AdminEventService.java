@@ -86,7 +86,7 @@ public class AdminEventService {
         if (event.getState() == EventState.PUBLISHED) {
             throw new EventUpdateValidException("The event state mustn't be PUBLISHED");
         }
-        event.setState(EventState.REJECTED);
+        event.setState(EventState.CANCELED);
         eventRepository.save(event);
 
         log.debug("The event with id: {} was rejected", eventId);

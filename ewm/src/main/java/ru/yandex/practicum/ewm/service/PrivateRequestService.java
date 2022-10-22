@@ -74,7 +74,7 @@ public class PrivateRequestService {
         getUserById(userId);
 
         ParticipationRequest request = getRequestById(requestId);
-        if (userId == request.getRequesterId()) {
+        if (userId != request.getRequesterId()) {
             throw new ValidationException("The current user can't cancel this request");
         }
 

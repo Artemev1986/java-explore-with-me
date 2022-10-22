@@ -65,14 +65,23 @@ public class EventMapper {
     }
 
     public static Event adminUpdateEvent(Event event, AdminUpdateEventRequest eventDto, Category category) {
+        if (eventDto.getTitle() != null)
         event.setTitle(eventDto.getTitle());
+        if (eventDto.getAnnotation() != null)
         event.setAnnotation(eventDto.getAnnotation());
+        if (eventDto.getDescription() != null)
         event.setDescription(eventDto.getDescription());
+        if (eventDto.getCategory() != null)
         event.setCategory(category);
+        if (eventDto.getEventDate() != null)
         event.setEventDate(eventDto.getEventDate());
+        if (eventDto.getLocation() != null)
         event.setLocation(eventDto.getLocation());
+        if (eventDto.getPaid() != null)
         event.setPaid(eventDto.getPaid());
+        if (eventDto.getParticipantLimit() != null)
         event.setParticipantLimit(eventDto.getParticipantLimit());
+        if (eventDto.getRequestModeration() != null)
         event.setRequestModeration(eventDto.getRequestModeration());
         return event;
     }
