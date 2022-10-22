@@ -31,7 +31,7 @@ public class PrivateEventService {
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
 
-    public List<EventShortDto> searchPublishedEvents(long userId, int from, int size) {
+    public List<EventShortDto> getEventsByUserId(long userId, int from, int size) {
         User user = getUserById(userId);
         Pageable page = PageRequest.of(from / size, size);
         List<EventShortDto> eventsDto = eventRepository.findEventsByInitiator(user, page)
@@ -121,7 +121,7 @@ public class PrivateEventService {
         return requests;
     }
 
-    public ParticipationRequestDto confirmRequest(long userId, long eventId, long reqId) {
+    public ParticipationRequestDto confirmRequest(long eventId, long userId, long reqId) {
         Event event = getEventById(eventId);
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             throw new ConfirmRequestValidException("confirmation of the application is not required");
@@ -150,7 +150,7 @@ public class PrivateEventService {
         return RequestMapper.toRequestDto(request);
     }
 
-    public ParticipationRequestDto rejectRequest(long userId, long eventId, long reqId) {
+    public ParticipationRequestDto rejectRequest(long eventId, long userId, long reqId) {
         Event event = getEventById(eventId);
         getUserById(userId);
         if (userId != event.getInitiator().getId()) {
@@ -185,12 +185,5 @@ public class PrivateEventService {
                 .orElseThrow(() -> new NotFoundException("The event with id (" + id + ") not found"));
         log.debug("The event was got by id: {}", id);
         return event;
-    }
-
-    private ParticipationRequest getRequestById(long id) {
-        ParticipationRequest request = requestRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("The request with id (" + id + ") not found"));
-        log.debug("The was request got by id: {}", id);
-        return request;
     }
 }

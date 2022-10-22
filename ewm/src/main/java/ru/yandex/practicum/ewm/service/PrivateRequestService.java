@@ -25,7 +25,7 @@ public class PrivateRequestService {
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
 
-    public List<ParticipationRequestDto> getRequestsByEvent(long userId) {
+    public List<ParticipationRequestDto> getRequestsByRequestor(long userId) {
         getUserById(userId);
         List<ParticipationRequestDto> requests = requestRepository.findAllByRequesterId(userId)
                 .stream().map(RequestMapper::toRequestDto).collect(Collectors.toList());

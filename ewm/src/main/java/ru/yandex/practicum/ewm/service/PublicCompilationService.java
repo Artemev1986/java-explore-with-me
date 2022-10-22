@@ -21,7 +21,7 @@ public class PublicCompilationService {
 
     private final CompilationRepository compilationRepository;
 
-    public List<CompilationDto> getCompilations(boolean pinned, int from, int size) {
+    public List<CompilationDto> getCompilations(Boolean pinned, int from, int size) {
         Pageable page = PageRequest.of(from / size, size);
         List<CompilationDto> compilations = compilationRepository.findAllByPinned(pinned, page)
                 .stream().map(CompilationMapper::toCompilationDto).collect(Collectors.toList());

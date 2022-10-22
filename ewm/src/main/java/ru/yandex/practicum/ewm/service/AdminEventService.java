@@ -15,7 +15,6 @@ import ru.yandex.practicum.ewm.model.Event;
 import ru.yandex.practicum.ewm.model.EventState;
 import ru.yandex.practicum.ewm.repository.CategoryRepository;
 import ru.yandex.practicum.ewm.repository.EventRepository;
-import ru.yandex.practicum.ewm.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 public class AdminEventService {
 
     private final EventRepository eventRepository;
-    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     public List<EventFullDto> getEvents(List<Long> users,
                                         List<Long> categories,
@@ -70,6 +68,12 @@ public class AdminEventService {
         if (event.getState() != EventState.PENDING) {
             throw new EventUpdateValidException("The event state must be PENDING");
         }
+
+        if (event.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new EventUpdateValidException("the start date of the event must be no earlier than one hour from " +
+                    "the date of publication");
+        }
+
         event.setState(EventState.PUBLISHED);
         eventRepository.save(event);
 

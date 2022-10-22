@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS events (
 
 CREATE TABLE IF NOT EXISTS compilations (
     compilation_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    title VARCHAR(50) NOT NULL,
+    title VARCHAR(100) NOT NULL,
     is_pinned BOOLEAN NOT NULL,
     CONSTRAINT uniq_compilation_title UNIQUE (title)
 );

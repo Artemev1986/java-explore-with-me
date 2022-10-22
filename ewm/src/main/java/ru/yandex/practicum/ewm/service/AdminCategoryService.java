@@ -17,7 +17,7 @@ public class AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryDto addUser(NewCategoryDto categoryDto) {
+    public CategoryDto addCategory(NewCategoryDto categoryDto) {
         Category category = CategoryMapper.toCategory(categoryDto);
         categoryRepository.save(category);
         log.debug("Added new category with id: {}", category.getId());
@@ -26,6 +26,7 @@ public class AdminCategoryService {
 
     public CategoryDto updateCategory(CategoryDto categoryDto) {
         Category category = getCategory(categoryDto.getId());
+        category.setName(categoryDto.getName());
         CategoryDto categoryDtoResponse = CategoryMapper.toCategoryDto(categoryRepository.save(category));
         log.debug("Category with id: {} was updated", category.getId());
         return categoryDtoResponse;

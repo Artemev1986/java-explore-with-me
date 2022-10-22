@@ -18,10 +18,10 @@ public class Location {
     @Column(name = "location_id")
     private Long id;
     @Column(name = "lat", nullable = false)
-    @Range(min = -90, max = 90, message = "{latitude.range}")
+    //@Range(min = -90, max = 90, message = "{latitude.range}")
     private Float lat;
     @Column(name = "lon", nullable = false)
-    @Range(min = -180, max = 180, message = "{longitude.range}")
+    //@Range(min = -180, max = 180, message = "{longitude.range}")
     private Float lon;
 
     @Override

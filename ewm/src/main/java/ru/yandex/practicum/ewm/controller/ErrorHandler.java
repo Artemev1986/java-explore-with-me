@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.ewm.exception.ApiError;
 import ru.yandex.practicum.ewm.exception.NotFoundException;
-import ru.yandex.practicum.ewm.exception.StateNotValidException;
+import ru.yandex.practicum.ewm.exception.ForbiddenException;
 import ru.yandex.practicum.ewm.exception.ValidationException;
 
 import java.time.LocalDateTime;
@@ -20,8 +20,7 @@ import java.util.Arrays;
 public class ErrorHandler {
     private final ApiError apiError = new ApiError();
 
-  @ExceptionHandler(value = {MethodArgumentNotValidException.class,
-          ValidationException.class, StateNotValidException.class})
+  @ExceptionHandler(value = {MethodArgumentNotValidException.class, ValidationException.class})
   public ResponseEntity<?> handleMethodArgumentNotValid(final Throwable e) {
       Arrays.stream(e.getStackTrace())
               .map(StackTraceElement::toString)
@@ -33,6 +32,19 @@ public class ErrorHandler {
       log.warn(String.valueOf(e));
       return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
   }
+
+    @ExceptionHandler(value = {ForbiddenException.class})
+    public ResponseEntity<?> forbiddenExceptions(final Throwable e) {
+        Arrays.stream(e.getStackTrace())
+                .map(StackTraceElement::toString)
+                .forEach(apiError.getErrors()::add);
+        apiError.setMessage(e.getMessage());
+        apiError.setReason("The conditions for the transaction are not met");
+        apiError.setStatus("FORBIDDEN");
+        apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        log.warn(String.valueOf(e));
+        return new ResponseEntity<>(apiError, HttpStatus.FORBIDDEN);
+    }
 
   @ExceptionHandler
   public ResponseEntity<?> handleNotFoundException(final NotFoundException e) {

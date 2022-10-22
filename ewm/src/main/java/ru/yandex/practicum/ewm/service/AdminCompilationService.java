@@ -10,7 +10,6 @@ import ru.yandex.practicum.ewm.mapper.CompilationMapper;
 import ru.yandex.practicum.ewm.model.Compilation;
 import ru.yandex.practicum.ewm.model.Event;
 import ru.yandex.practicum.ewm.repository.CompilationRepository;
-import ru.yandex.practicum.ewm.repository.EventCompilationDb;
 import ru.yandex.practicum.ewm.repository.EventRepository;
 
 import java.util.Set;
@@ -22,7 +21,6 @@ public class AdminCompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
-    private final EventCompilationDb eventCompilationRepository;
 
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         Set<Event> events = eventRepository.getEventsForCompilation(newCompilationDto.getEvents());
@@ -39,20 +37,31 @@ public class AdminCompilationService {
     }
 
     public void deleteEventFromCompilation(long compilationId, long eventId) {
-        getCompilationById(compilationId);
-        getEventById(eventId);
+        Compilation compilation = getCompilationById(compilationId);
+        Set<Event> events = compilation.getEvents();
+        events.remove(getEventById(eventId));
+        compilation.setEvents(events);
+        compilationRepository.save(compilation);
         log.debug("The event with id: {} was deleted from the compilation with id: {}", eventId, compilationId);
-        eventCompilationRepository.deleteEvent(compilationId, eventId);
     }
 
-    public void unpinFromCompilation(long compilationId) {
+    public void addEventToCompilation(long compilationId, long eventId) {
+        Compilation compilation = getCompilationById(compilationId);
+        Set<Event> events = compilation.getEvents();
+        events.add(getEventById(eventId));
+        compilation.setEvents(events);
+        compilationRepository.save(compilation);
+        log.debug("The event with id: {} was added to the compilation with id: {}", eventId, compilationId);
+    }
+
+    public void unpinCompilation(long compilationId) {
         Compilation compilation = getCompilationById(compilationId);
         compilation.setPinned(false);
         compilationRepository.save(compilation);
         log.debug("The compilation with id: {} was unpinned", compilationId);
     }
 
-    public void pinFromCompilation(long compilationId) {
+    public void pinCompilation(long compilationId) {
         Compilation compilation = getCompilationById(compilationId);
         compilation.setPinned(true);
         compilationRepository.save(compilation);
