@@ -1,7 +1,6 @@
 package ru.yandex.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/events")
-@Slf4j
 @Validated
 public class AdminEventController {
 
@@ -34,9 +32,9 @@ public class AdminEventController {
             @RequestParam List<String> states,
             @RequestParam List<Long> categories,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
-            @RequestParam LocalDateTime rangeStart,
+            @RequestParam(required = false) LocalDateTime rangeStart,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
-            @RequestParam LocalDateTime rangeEnd,
+            @RequestParam(required = false) LocalDateTime rangeEnd,
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
             @Positive @RequestParam(defaultValue = "10") Integer size) {
 

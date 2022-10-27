@@ -3,6 +3,7 @@ package ru.yandex.practicum.ewm.repository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.practicum.ewm.model.Event;
 import ru.yandex.practicum.ewm.model.EventState;
 import ru.yandex.practicum.ewm.model.User;
@@ -28,7 +29,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                   List<Long> categories,
                                   boolean paid,
                                   LocalDateTime rangeStart,
-                                  LocalDateTime rangeEnd,
+                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime rangeEnd,
                                   boolean onlyAvailable,
                                   Pageable page);
 

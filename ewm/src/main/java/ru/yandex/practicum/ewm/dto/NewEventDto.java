@@ -2,7 +2,6 @@ package ru.yandex.practicum.ewm.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.practicum.ewm.model.Location;
 
 import javax.validation.constraints.*;
@@ -22,7 +21,6 @@ public class NewEventDto {
     private Long category;
     @NotNull(message = "{eventDate.notnull}")
     @Future(message = "{eventDate.future}")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     @NotNull(message = "{location.notnull}")

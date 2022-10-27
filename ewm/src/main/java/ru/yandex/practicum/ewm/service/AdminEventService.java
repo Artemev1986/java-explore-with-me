@@ -36,12 +36,15 @@ public class AdminEventService {
 
         Pageable page = PageRequest.of(from / size, size);
 
+        LocalDateTime start = rangeStart == null ? LocalDateTime.now() : rangeStart;
+        LocalDateTime end = rangeEnd == null ? LocalDateTime.MAX : rangeEnd;
+
         List<EventFullDto> eventsDto = eventRepository.getEventsAdmin(
                 users,
                 categories,
                 states,
-                rangeStart,
-                rangeEnd,
+                start,
+                end,
                 page
         ).stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
 

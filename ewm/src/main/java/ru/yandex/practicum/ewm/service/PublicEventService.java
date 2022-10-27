@@ -42,12 +42,15 @@ public class PublicEventService {
 
         Pageable page = PageRequest.of(from / size, size, Sort.by(sortParameter).ascending());
 
+        LocalDateTime start = rangeStart == null ? LocalDateTime.now() : rangeStart;
+        LocalDateTime end = rangeEnd == null ? LocalDateTime.MAX : rangeEnd;
+
         List<EventShortDto> eventsDto = eventRepository.searchEventByText(
                 text,
                 categories,
                 paid,
-                rangeStart,
-                rangeEnd,
+                start,
+                end,
                 onlyAvailable,
                 page
         ).stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
