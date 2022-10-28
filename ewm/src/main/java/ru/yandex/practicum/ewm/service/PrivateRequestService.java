@@ -35,7 +35,7 @@ public class PrivateRequestService {
 
     public ParticipationRequestDto addRequest(long userId, long eventId) {
         Event event = getEventById(eventId);
-        if (!(event.getState() == EventState.PUBLISHED )) {
+        if (!(event.getState() == EventState.PUBLISHED)) {
             throw new ValidationException("The event state not PUBLISHED");
         }
 

@@ -32,6 +32,7 @@ public class PublicCategoryService {
     public CategoryDto getCategoryById(long id) {
         return CategoryMapper.toCategoryDto(getCategory(id));
     }
+
     private Category getCategory(long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category with id (" + id + ") not found"));

@@ -70,7 +70,7 @@ public class AdminCompilationService {
 
     private Compilation getCompilationById(long compilationId) {
         Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(()->  new NotFoundException("The compilation with id (" + compilationId + ") not found"));
+                .orElseThrow(() ->  new NotFoundException("The compilation with id (" + compilationId + ") not found"));
         log.debug("The compilation was got by id: {}", compilationId);
         return compilation;
     }

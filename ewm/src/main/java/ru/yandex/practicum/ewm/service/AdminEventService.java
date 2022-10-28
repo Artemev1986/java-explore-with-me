@@ -27,6 +27,7 @@ public class AdminEventService {
 
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
+
     public List<EventFullDto> getEvents(List<Long> users,
                                         List<Long> categories,
                                         List<EventState> states,
