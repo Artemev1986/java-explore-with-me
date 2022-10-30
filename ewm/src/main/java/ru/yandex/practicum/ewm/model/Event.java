@@ -1,22 +1,18 @@
 package ru.yandex.practicum.ewm.model;
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
 @Entity
 @Table(name = "events")
-public class Event {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "event_id")
-    private Long id;
+public class Event extends BaseEntity{
     @Column(name = "title", nullable = false)
     private String title;
     @Column(name = "annotation", nullable = false)
@@ -51,17 +47,4 @@ public class Event {
     private EventState state;
     @Column(name = "views", nullable = false)
     private Long views;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Event event = (Event) o;
-        return id != null && Objects.equals(id, event.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }
