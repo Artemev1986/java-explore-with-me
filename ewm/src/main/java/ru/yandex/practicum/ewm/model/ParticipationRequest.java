@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @Table(name = "requests")
-public class ParticipationRequest extends BaseEntity{
+public class ParticipationRequest extends BaseEntity {
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
     @Column(name = "event_id")

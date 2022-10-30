@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @ToString
 @Entity
 @Table(name = "locations")
-public class Location extends BaseEntity{
+public class Location extends BaseEntity {
     @Column(name = "lat", nullable = false)
     private Float lat;
     @Column(name = "lon", nullable = false)

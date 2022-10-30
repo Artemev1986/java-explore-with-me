@@ -13,7 +13,7 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(name = "compilations")
-public class Compilation extends BaseEntity{
+public class Compilation extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
     @Column(name = "is_pinned", nullable = false)

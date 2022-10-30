@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @Table(name = "events")
-public class Event extends BaseEntity{
+public class Event extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
     @Column(name = "annotation", nullable = false)

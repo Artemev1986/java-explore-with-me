@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @ToString
 @Entity
 @Table(name = "categories")
-public class Category extends BaseEntity{
+public class Category extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;
 }
