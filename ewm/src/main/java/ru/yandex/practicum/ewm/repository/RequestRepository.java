@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import ru.yandex.practicum.ewm.model.ParticipationRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<ParticipationRequest, Long> {
 
@@ -19,4 +20,6 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
     long updateEventRequests(long eventId);
 
     List<ParticipationRequest> findAllByRequesterId(long requesterId);
+
+    ParticipationRequest findParticipationRequestByRequesterIdAndEventId(Long requestorId, Long eventId);
 }

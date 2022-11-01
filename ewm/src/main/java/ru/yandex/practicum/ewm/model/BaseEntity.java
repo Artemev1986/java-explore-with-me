@@ -1,6 +1,8 @@
 package ru.yandex.practicum.ewm.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,8 @@ import java.util.Objects;
 
 @Getter
 @MappedSuperclass
+@AllArgsConstructor
+@NoArgsConstructor
 public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

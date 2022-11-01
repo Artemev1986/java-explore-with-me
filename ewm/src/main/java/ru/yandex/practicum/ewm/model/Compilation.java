@@ -18,7 +18,7 @@ public class Compilation extends BaseEntity {
     private String title;
     @Column(name = "is_pinned", nullable = false)
     private Boolean pinned;
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "event_compilations",
             joinColumns = {@JoinColumn(name = "compilation_id")},

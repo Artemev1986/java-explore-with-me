@@ -19,4 +19,5 @@ public class EventShortDto {
     private UserShortDto initiator;
     private Boolean paid;
     private Long views;
+    private Long rating;
 }

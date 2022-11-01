@@ -26,7 +26,7 @@ public class PrivateRequestService {
     private final RequestRepository requestRepository;
 
     public List<ParticipationRequestDto> getRequestsByRequestor(long userId) {
-        getUserById(userId);
+        checkUserById(userId);
         List<ParticipationRequestDto> requests = requestRepository.findAllByRequesterId(userId)
                 .stream().map(RequestMapper::toRequestDto).collect(Collectors.toList());
         log.debug("Requests had got for user with id: {}. Requests counts: {}", userId, requests.size());
@@ -44,7 +44,7 @@ public class PrivateRequestService {
             throw new ValidationException("This event has exceeded the limit of request");
         }
 
-        getUserById(userId);
+        checkUserById(userId);
 
         if (userId == event.getInitiator().getId()) {
             throw new ValidationException("The event initiator can't add a request to participate in this event");
@@ -71,7 +71,7 @@ public class PrivateRequestService {
     }
 
     public ParticipationRequestDto canceledRequest(long userId, long requestId) {
-        getUserById(userId);
+        checkUserById(userId);
 
         ParticipationRequest request = getRequestById(requestId);
         if (userId != request.getRequesterId()) {
@@ -87,11 +87,10 @@ public class PrivateRequestService {
         return RequestMapper.toRequestDto(request);
     }
 
-    private User getUserById(long id) {
-        User user = userRepository.findById(id)
+    private void checkUserById(long id) {
+        userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id (" + id + ") not found"));
         log.debug("The user was got by id: {}", id);
-        return user;
     }
 
     private Event getEventById(long id) {

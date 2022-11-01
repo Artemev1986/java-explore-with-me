@@ -3,13 +3,16 @@ package ru.yandex.practicum.ewm.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.ewm.dto.CompilationDto;
 import ru.yandex.practicum.ewm.dto.NewCompilationDto;
 import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.CompilationMapper;
 import ru.yandex.practicum.ewm.model.Compilation;
 import ru.yandex.practicum.ewm.model.Event;
+import ru.yandex.practicum.ewm.model.EventCompilation;
 import ru.yandex.practicum.ewm.repository.CompilationRepository;
+import ru.yandex.practicum.ewm.repository.EventCompilationRepository;
 import ru.yandex.practicum.ewm.repository.EventRepository;
 
 import java.util.Set;
@@ -21,6 +24,7 @@ public class AdminCompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final EventCompilationRepository eventCompilationRepository;
 
     public CompilationDto addCompilation(NewCompilationDto newCompilationDto) {
         Set<Event> events = eventRepository.getEventsForCompilation(newCompilationDto.getEvents());
@@ -36,21 +40,19 @@ public class AdminCompilationService {
         log.debug("The compilation with id: {} was deleted", compilationId);
     }
 
+    @Transactional
     public void deleteEventFromCompilation(long compilationId, long eventId) {
-        Compilation compilation = getCompilationById(compilationId);
-        Set<Event> events = compilation.getEvents();
-        events.remove(getEventById(eventId));
-        compilation.setEvents(events);
-        compilationRepository.save(compilation);
+        eventCompilationRepository.deleteEventCompilationByCompilationIdAndEventId(compilationId, eventId);
         log.debug("The event with id: {} was deleted from the compilation with id: {}", eventId, compilationId);
     }
 
     public void addEventToCompilation(long compilationId, long eventId) {
-        Compilation compilation = getCompilationById(compilationId);
-        Set<Event> events = compilation.getEvents();
-        events.add(getEventById(eventId));
-        compilation.setEvents(events);
-        compilationRepository.save(compilation);
+        getCompilationById(compilationId);
+        checkEventById(eventId);
+        EventCompilation eventCompilation = new EventCompilation();
+        eventCompilation.setCompilationId(compilationId);
+        eventCompilation.setEventId(eventId);
+        eventCompilationRepository.save(eventCompilation);
         log.debug("The event with id: {} was added to the compilation with id: {}", eventId, compilationId);
     }
 
@@ -75,10 +77,9 @@ public class AdminCompilationService {
         return compilation;
     }
 
-    private Event getEventById(long id) {
-        Event event = eventRepository.findById(id)
+    private void checkEventById(long id) {
+        eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("The event with id (" + id + ") not found"));
         log.debug("The event was got by id: {}", id);
-        return event;
     }
 }

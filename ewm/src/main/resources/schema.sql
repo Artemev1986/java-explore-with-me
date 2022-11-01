@@ -58,3 +58,10 @@ CREATE TABLE IF NOT EXISTS requests (
     status VARCHAR(10),
     CONSTRAINT uniq_event_requester UNIQUE (event_id, requester_id)
 );
+
+CREATE TABLE IF NOT EXISTS event_likes (
+    event_id BIGINT NOT NULL REFERENCES events(id),
+    user_id BIGINT NOT NULL REFERENCES users(id),
+    is_positive BOOLEAN NOT NULL,
+    PRIMARY KEY (event_id, user_id)
+);
