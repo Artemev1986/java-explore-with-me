@@ -17,4 +17,6 @@ public interface EventLikeRepository extends JpaRepository<EventLike, Long> {
             "AND evl.eventId = :eventId " +
             "GROUP BY evl.eventId")
     Long getDislikes(Long eventId);
+
+    EventLike findEventLikeByUserIdAndEventId(Long userId, Long eventId);
 }

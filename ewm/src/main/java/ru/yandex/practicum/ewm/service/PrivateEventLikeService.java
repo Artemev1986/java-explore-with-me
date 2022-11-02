@@ -3,8 +3,10 @@ package ru.yandex.practicum.ewm.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.ewm.dto.EventShortDto;
 import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.exception.ValidationException;
+import ru.yandex.practicum.ewm.mapper.EventMapper;
 import ru.yandex.practicum.ewm.model.*;
 import ru.yandex.practicum.ewm.repository.EventLikeRepository;
 import ru.yandex.practicum.ewm.repository.EventRepository;
@@ -24,9 +26,9 @@ public class PrivateEventLikeService {
     private final EventLikeRepository eventLikeRepository;
     private final RequestRepository requestRepository;
 
-    public void addLikeDislike(Long userId, Long eventId, Boolean positive) {
+    public EventShortDto addLikeDislike(Long userId, Long eventId, Boolean positive) {
         Event event = getEventById(eventId);
-        if (event.getEventDate().isAfter(LocalDateTime.now())) {
+        if (event.getEventDate().isBefore(LocalDateTime.now())) {
             throw new ValidationException("The event has not yet arrived");
         }
 
@@ -37,30 +39,41 @@ public class PrivateEventLikeService {
             throw new ValidationException("The request status not CONFIRMED");
         }
 
+        EventLike likeLoaded = eventLikeRepository.findEventLikeByUserIdAndEventId(userId, eventId);
+
+        int state = 0;
+
+        if (likeLoaded != null && likeLoaded.getPositive()) {
+            state = 1;
+        } else if (likeLoaded != null && !likeLoaded.getPositive()) {
+            state = 2;
+        }
+
         EventLike like = new EventLike();
         like.setEventId(eventId);
         like.setUserId(userId);
         like.setPositive(positive);
         eventLikeRepository.save(like);
-
         User initiator = event.getInitiator();
 
-        if (positive) {
-            event.setRating(event.getRating() + 1);
-            initiator.setRating(initiator.getRating() + 1);
-        } else {
-            event.setRating(event.getRating() - 1);
-            initiator.setRating(initiator.getRating() - 1);
+        if (positive && (state == 2 || state == 0)) {
+            int rating = state == 0 ? 1 : 2;
+            event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) + rating);
+            initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) + rating);
+
+            log.debug("Like for event with id {} was added by user with id {}", event.getId(), user.getId());
+        } else if (!positive && (state == 1 || state == 0)) {
+            int rating = state == 0 ? 1 : 2;
+            event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) - rating);
+            initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) - rating);
+
+            log.debug("Dislike for event with id {} was added by user with id {}", event.getId(), user.getId());
         }
 
         eventRepository.save(event);
         userRepository.save(initiator);
 
-        if (positive) {
-            log.debug("Like for event with id {} was added by user with id {}", event.getId(), user.getId());
-        } else {
-            log.debug("Dislike for event with id {} was added by user with id {}", event.getId(), user.getId());
-        }
+        return EventMapper.toEventShortDto(event);
     }
 
     private User getUserById(long id) {
