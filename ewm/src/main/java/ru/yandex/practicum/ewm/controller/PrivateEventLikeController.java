@@ -22,4 +22,12 @@ public class PrivateEventLikeController {
         EventShortDto eventShortDto = eventLikeService.addLikeDislike(userId, eventId, positive);
         return new ResponseEntity<>(eventShortDto, HttpStatus.OK);
     }
+
+    @DeleteMapping
+    public ResponseEntity<Object> removeLikeDislike(
+            @PathVariable Long userId,
+            @PathVariable Long eventId) {
+        eventLikeService.removeLikeDislike(userId, eventId);
+        return ResponseEntity.ok().build();
+    }
 }

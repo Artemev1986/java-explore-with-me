@@ -3,6 +3,7 @@ package ru.yandex.practicum.ewm.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.ewm.dto.EventShortDto;
 import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.exception.ValidationException;
@@ -28,11 +29,11 @@ public class PrivateEventLikeService {
 
     public EventShortDto addLikeDislike(Long userId, Long eventId, Boolean positive) {
         Event event = getEventById(eventId);
-        if (event.getEventDate().isBefore(LocalDateTime.now())) {
+        if (event.getEventDate().isAfter(LocalDateTime.now())) {
             throw new ValidationException("The event has not yet arrived");
         }
 
-        User user = getUserById(userId);
+        checkUserById(userId);
 
         ParticipationRequest request = getRequestByRequestorIdAndEventId(userId, eventId);
         if (request.getStatus() != RequestStatus.CONFIRMED) {
@@ -60,27 +61,56 @@ public class PrivateEventLikeService {
             int rating = state == 0 ? 1 : 2;
             event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) + rating);
             initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) + rating);
-
-            log.debug("Like for event with id {} was added by user with id {}", event.getId(), user.getId());
+            eventRepository.save(event);
+            userRepository.save(initiator);
+            log.debug("Like for event with id {} was added by user with id {}", eventId, userId);
         } else if (!positive && (state == 1 || state == 0)) {
             int rating = state == 0 ? 1 : 2;
             event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) - rating);
             initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) - rating);
-
-            log.debug("Dislike for event with id {} was added by user with id {}", event.getId(), user.getId());
+            eventRepository.save(event);
+            userRepository.save(initiator);
+            log.debug("Dislike for event with id {} was added by user with id {}", eventId, userId);
         }
-
-        eventRepository.save(event);
-        userRepository.save(initiator);
 
         return EventMapper.toEventShortDto(event);
     }
 
-    private User getUserById(long id) {
-        User user = userRepository.findById(id)
+    @Transactional
+    public void removeLikeDislike(Long userId, Long eventId) {
+
+        EventLike likeLoaded = eventLikeRepository.findEventLikeByUserIdAndEventId(userId, eventId);
+
+        if (likeLoaded == null) {
+            throw new NotFoundException("Like-dislike for event id " + eventId +
+                    " from user id " + userId + " not found");
+        }
+
+        boolean state = likeLoaded.getPositive();
+        eventLikeRepository.delete(likeLoaded);
+
+        Event event = getEventById(eventId);
+        User initiator = event.getInitiator();
+
+        if (state) {
+            event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) - 1);
+            initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) - 1);
+            eventRepository.save(event);
+            userRepository.save(initiator);
+            log.debug("Like for event with id {} was deleted by user with id {}", eventId, userId);
+        } else {
+            event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) + 1);
+            initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) + 1);
+            eventRepository.save(event);
+            userRepository.save(initiator);
+            log.debug("Dislike for event with id {} was deleted by user with id {}", eventId, userId);
+        }
+    }
+
+    private void checkUserById(long id) {
+        userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id (" + id + ") not found"));
         log.debug("The user was got by id: {}", id);
-        return user;
     }
 
     private Event getEventById(long id) {
