@@ -43,6 +43,19 @@ public class PrivateEventLikeService {
         like.setPositive(positive);
         eventLikeRepository.save(like);
 
+        User initiator = event.getInitiator();
+
+        if (positive) {
+            event.setRating(event.getRating() + 1);
+            initiator.setRating(initiator.getRating() + 1);
+        } else {
+            event.setRating(event.getRating() - 1);
+            initiator.setRating(initiator.getRating() - 1);
+        }
+
+        eventRepository.save(event);
+        userRepository.save(initiator);
+
         if (positive) {
             log.debug("Like for event with id {} was added by user with id {}", event.getId(), user.getId());
         } else {

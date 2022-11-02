@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     name VARCHAR(100) NOT NULL,
-    email varchar(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    rating BIGINT,
     CONSTRAINT uniq_users_email UNIQUE (email)
 );
 
@@ -34,6 +35,7 @@ CREATE TABLE IF NOT EXISTS events (
     is_request_moderation BOOLEAN NOT NULL,
     state VARCHAR(10) NOT NULL,
     views BIGINT NOT NULL,
+    rating BIGINT,
     CONSTRAINT uniq_event_title UNIQUE (title)
 );
 

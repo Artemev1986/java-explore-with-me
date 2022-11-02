@@ -14,12 +14,10 @@ import ru.yandex.practicum.ewm.model.Category;
 import ru.yandex.practicum.ewm.model.Event;
 import ru.yandex.practicum.ewm.model.EventState;
 import ru.yandex.practicum.ewm.repository.CategoryRepository;
-import ru.yandex.practicum.ewm.repository.EventLikeRepository;
 import ru.yandex.practicum.ewm.repository.EventRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,7 +27,6 @@ public class AdminEventService {
 
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
-    private final EventLikeRepository eventLikeRepository;
 
     public List<EventFullDto> getEvents(List<Long> users,
                                         List<Long> categories,
@@ -64,9 +61,7 @@ public class AdminEventService {
 
         Event event = EventMapper.adminUpdateEvent(eventFromMemory, updateEventDto, category);
         eventRepository.save(event);
-        Long likes = Optional.ofNullable(eventLikeRepository.getLikes(eventId)).orElse(0L);
-        Long dislikes = Optional.ofNullable(eventLikeRepository.getDislikes(eventId)).orElse(0L);
-        event.setRating(likes - dislikes);
+
         log.debug("Event with id: {} was updated", eventId);
 
         return EventMapper.toEventFullDto(event);

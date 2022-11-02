@@ -12,10 +12,12 @@ import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.EventMapper;
 import ru.yandex.practicum.ewm.mapper.RequestMapper;
 import ru.yandex.practicum.ewm.model.*;
-import ru.yandex.practicum.ewm.repository.*;
+import ru.yandex.practicum.ewm.repository.CategoryRepository;
+import ru.yandex.practicum.ewm.repository.EventRepository;
+import ru.yandex.practicum.ewm.repository.RequestRepository;
+import ru.yandex.practicum.ewm.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,7 +29,6 @@ public class PrivateEventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
-    private final EventLikeRepository eventLikeRepository;
 
     public List<EventShortDto> getEventsByUserId(long userId, int from, int size) {
         User user = getUserById(userId);
@@ -71,9 +72,6 @@ public class PrivateEventService {
 
         log.debug("Event with id: {} was updated", event.getId());
 
-        Long likes = Optional.ofNullable(eventLikeRepository.getLikes(event.getId())).orElse(0L);
-        Long dislikes = Optional.ofNullable(eventLikeRepository.getDislikes(event.getId())).orElse(0L);
-        event.setRating(likes - dislikes);
         return EventMapper.toEventFullDto(event);
     }
 
@@ -84,9 +82,7 @@ public class PrivateEventService {
         if (userId != event.getInitiator().getId()) {
             throw new EventUpdateValidException("The initiator is not the current user");
         }
-        Long likes = Optional.ofNullable(eventLikeRepository.getLikes(eventId)).orElse(0L);
-        Long dislikes = Optional.ofNullable(eventLikeRepository.getDislikes(eventId)).orElse(0L);
-        event.setRating(likes - dislikes);
+
         log.debug("Got the event with eventId: {} added by the user with id: {}", eventId, userId);
         return EventMapper.toEventFullDto(event);
     }

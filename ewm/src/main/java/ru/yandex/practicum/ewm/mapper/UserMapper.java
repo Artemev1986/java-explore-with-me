@@ -11,6 +11,7 @@ public class UserMapper {
         userDto.setId(user.getId());
         userDto.setName(user.getName());
         userDto.setEmail(user.getEmail());
+        userDto.setRating(userDto.getRating());
         return userDto;
     }
 
@@ -18,6 +19,7 @@ public class UserMapper {
         UserShortDto userDto = new UserShortDto();
         userDto.setId(user.getId());
         userDto.setName(user.getName());
+        userDto.setRating(userDto.getRating());
         return userDto;
     }
 

@@ -14,28 +14,7 @@ import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    String event = "NEW ru.yandex.practicum.ewm.model.Event(" +
-            "ev.id," +
-            "ev.title," +
-            "ev.annotation," +
-            "ev.description," +
-            "ev.category," +
-            "ev.confirmedRequests," +
-            "ev.createdOn," +
-            "ev.eventDate," +
-            "ev.initiator," +
-            "ev.location," +
-            "ev.paid," +
-            "ev.participantLimit," +
-            "ev.publishedOn," +
-            "ev.requestModeration," +
-            "ev.state," +
-            "ev.views," +
-            "COALESCE((SELECT COUNT(evl.userId) FROM EventLike evl WHERE evl.positive = TRUE GROUP BY evl.eventId), 0) - " +
-            "COALESCE((SELECT COUNT(evl.userId) FROM EventLike evl WHERE evl.positive = FALSE GROUP BY evl.eventId), 0)) ";
-
-    @Query("SELECT " + event +
-            "FROM Event ev WHERE " +
+    @Query("SELECT ev FROM Event ev WHERE " +
             "(FALSE = :onlyAvailable OR (ev.confirmedRequests < ev.participantLimit) AND TRUE = :onlyAvailable " +
             "OR ev.participantLimit = 0) " +
             "AND ev.category.id IN :categories  " +
@@ -54,13 +33,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                   boolean onlyAvailable,
                                   Pageable page);
 
-    @Query("SELECT " + event + "FROM Event ev WHERE ev.id = :id AND ev.state = :state")
-    Event fiEventByIdAndState(long id, EventState state);
+    Event findEventByIdAndState(long id, EventState state);
 
-    @Query("SELECT " + event + "FROM Event ev WHERE ev.initiator = :initiator")
     List<Event> findEventsByInitiator(User initiator, Pageable page);
 
-    @Query("SELECT " + event + "FROM Event ev WHERE " +
+    @Query("SELECT ev FROM Event ev WHERE " +
             "ev.initiator.id IN :users  " +
             "AND ev.state IN :states  " +
             "AND ev.category.id IN :categories  " +
@@ -74,6 +51,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                LocalDateTime rangeEnd,
                                Pageable page);
 
-    @Query("SELECT " + event + "FROM Event ev WHERE ev.id IN :events")
+    @Query("SELECT ev FROM Event ev WHERE ev.id IN :events")
     Set<Event> getEventsForCompilation(List<Long> events);
 }

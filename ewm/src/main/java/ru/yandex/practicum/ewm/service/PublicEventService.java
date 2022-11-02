@@ -12,12 +12,10 @@ import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.EventMapper;
 import ru.yandex.practicum.ewm.model.Event;
 import ru.yandex.practicum.ewm.model.EventState;
-import ru.yandex.practicum.ewm.repository.EventLikeRepository;
 import ru.yandex.practicum.ewm.repository.EventRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 public class PublicEventService {
 
     private final EventRepository eventRepository;
-    private final EventLikeRepository eventLikeRepository;
 
     public List<EventShortDto> searchPublishedEvents(String text,
                                                      List<Long> categories,
@@ -66,13 +63,10 @@ public class PublicEventService {
     }
 
     public EventFullDto getEventById(long id) {
-        Event event = eventRepository.fiEventByIdAndState(id, EventState.PUBLISHED);
+        Event event = eventRepository.findEventByIdAndState(id, EventState.PUBLISHED);
         if (event == null) {
             throw new NotFoundException("Published event with id " + id + " not found");
         }
-        Long likes = Optional.ofNullable(eventLikeRepository.getLikes(id)).orElse(0L);
-        Long dislikes = Optional.ofNullable(eventLikeRepository.getDislikes(id)).orElse(0L);
-        event.setRating(likes - dislikes);
         log.debug("Get published event by id: {}", id);
         return EventMapper.toEventFullDto(event);
     }

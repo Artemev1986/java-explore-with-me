@@ -45,45 +45,6 @@ public class Event extends BaseEntity {
     private EventState state;
     @Column(name = "views", nullable = false)
     private Long views;
-    @Transient
+    @Column(name = "rating")
     private Long rating;
-
-    public Event(Long id,
-                 String title,
-                 String annotation,
-                 String description,
-                 Category category,
-                 Long confirmedRequests,
-                 LocalDateTime createdOn,
-                 LocalDateTime eventDate,
-                 User initiator,
-                 Location location,
-                 Boolean paid,
-                 Integer participantLimit,
-                 LocalDateTime publishedOn,
-                 Boolean requestModeration,
-                 EventState state,
-                 Long views, Long rating) {
-        super(id);
-        this.title = title;
-        this.annotation = annotation;
-        this.description = description;
-        this.category = category;
-        this.confirmedRequests = confirmedRequests;
-        this.createdOn = createdOn;
-        this.eventDate = eventDate;
-        this.initiator = initiator;
-        this.location = location;
-        this.paid = paid;
-        this.participantLimit = participantLimit;
-        this.publishedOn = publishedOn;
-        this.requestModeration = requestModeration;
-        this.state = state;
-        this.views = views;
-        this.rating = rating;
-    }
-
-    public Event() {
-
-    }
 }
