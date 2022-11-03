@@ -11,7 +11,6 @@ import ru.yandex.practicum.ewm.exception.ApiError;
 import ru.yandex.practicum.ewm.exception.ForbiddenException;
 import ru.yandex.practicum.ewm.exception.ValidationException;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
