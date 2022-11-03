@@ -9,22 +9,37 @@ import ru.yandex.practicum.ewm.service.PrivateEventLikeService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/users/{userId}/events/{eventId}/like-dislike")
+@RequestMapping("/users/{userId}/events/{eventId}")
 public class PrivateEventLikeController {
 
     private final PrivateEventLikeService eventLikeService;
 
-    @PutMapping
-    public ResponseEntity<Object> addLikeDislike(
+    @PutMapping("/like")
+    public ResponseEntity<Object> addLike(
             @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @RequestParam(name = "positive", required = false, defaultValue = "true") Boolean positive) {
-        EventShortDto eventShortDto = eventLikeService.addLikeDislike(userId, eventId, positive);
+            @PathVariable Long eventId) {
+        EventShortDto eventShortDto = eventLikeService.addLikeDislike(userId, eventId, true);
         return new ResponseEntity<>(eventShortDto, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Object> removeLikeDislike(
+    @PutMapping("/dislike")
+    public ResponseEntity<Object> addDislike(
+            @PathVariable Long userId,
+            @PathVariable Long eventId) {
+        EventShortDto eventShortDto = eventLikeService.addLikeDislike(userId, eventId, false);
+        return new ResponseEntity<>(eventShortDto, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/like")
+    public ResponseEntity<Object> removeLike(
+            @PathVariable Long userId,
+            @PathVariable Long eventId) {
+        eventLikeService.removeLikeDislike(userId, eventId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/dislike")
+    public ResponseEntity<Object> removeDislike(
             @PathVariable Long userId,
             @PathVariable Long eventId) {
         eventLikeService.removeLikeDislike(userId, eventId);

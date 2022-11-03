@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ewm.dto.CategoryDto;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.CategoryMapper;
 import ru.yandex.practicum.ewm.model.Category;
 import ru.yandex.practicum.ewm.repository.CategoryRepository;
@@ -30,13 +29,8 @@ public class PublicCategoryService {
     }
 
     public CategoryDto getCategoryById(long id) {
-        return CategoryMapper.toCategoryDto(getCategory(id));
-    }
-
-    private Category getCategory(long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Category with id (" + id + ") not found"));
+        Category category = categoryRepository.getById(id);
         log.debug("Category get by id: {}", id);
-        return category;
+        return CategoryMapper.toCategoryDto(category);
     }
 }

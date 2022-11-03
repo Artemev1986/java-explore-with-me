@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/users/{userId}/requests")
+@RequestMapping("/users/{userId}/requests")
 @Validated
 public class PrivateRequestController {
 

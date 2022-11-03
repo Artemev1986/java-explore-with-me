@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/events")
+@RequestMapping("/events")
 @Validated
 public class PublicEventController {
 

@@ -8,6 +8,7 @@ import ru.yandex.practicum.ewm.model.Event;
 import ru.yandex.practicum.ewm.model.EventState;
 import ru.yandex.practicum.ewm.model.User;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -53,4 +54,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     @Query("SELECT ev FROM Event ev WHERE ev.id IN :events")
     Set<Event> getEventsForCompilation(List<Long> events);
+
+    default Event getById(Long id) {
+        return findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("The event with id (" + id + ") not found"))
+        );
+    }
 }

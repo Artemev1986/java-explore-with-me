@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/admin/events")
+@RequestMapping("/admin/events")
 @Validated
 public class AdminEventController {
 

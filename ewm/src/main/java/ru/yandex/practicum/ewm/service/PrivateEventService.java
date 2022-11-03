@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ewm.dto.*;
 import ru.yandex.practicum.ewm.exception.ConfirmRequestValidException;
 import ru.yandex.practicum.ewm.exception.EventUpdateValidException;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.EventMapper;
 import ru.yandex.practicum.ewm.mapper.RequestMapper;
 import ru.yandex.practicum.ewm.model.*;
@@ -17,6 +16,7 @@ import ru.yandex.practicum.ewm.repository.EventRepository;
 import ru.yandex.practicum.ewm.repository.RequestRepository;
 import ru.yandex.practicum.ewm.repository.UserRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +31,7 @@ public class PrivateEventService {
     private final RequestRepository requestRepository;
 
     public List<EventShortDto> getEventsByUserId(long userId, int from, int size) {
-        User user = getUserById(userId);
+        User user = userRepository.getById(userId);
         Pageable page = PageRequest.of(from / size, size);
         List<EventShortDto> eventsDto = eventRepository.findEventsByInitiator(user, page)
                 .stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
@@ -41,8 +41,8 @@ public class PrivateEventService {
     }
 
     public EventFullDto addEvent(long userId, NewEventDto newEventDto) {
-        User initiator = getUserById(userId);
-        Category category = getCategoryById(newEventDto.getCategory());
+        User initiator = userRepository.getById(userId);
+        Category category = categoryRepository.getById(newEventDto.getCategory());
         Event event = EventMapper.toEven(newEventDto, category, initiator);
         eventRepository.save(event);
         log.debug("Added new event with id: {}", event.getId());
@@ -50,18 +50,18 @@ public class PrivateEventService {
     }
 
     public EventFullDto updateEvent(long userId, UpdateEventRequest updateEventDto) {
-        Event eventFromMemory = getEventById(updateEventDto.getEventId());
+        Event eventFromMemory = eventRepository.getById(updateEventDto.getEventId());
         if (!(eventFromMemory.getState() == EventState.PENDING || eventFromMemory.getState() == EventState.CANCELED)) {
             throw new EventUpdateValidException("The event state must be PENDING or CANCELED");
         }
 
-        getUserById(userId);
+        userRepository.getById(userId);
 
         if (userId != eventFromMemory.getInitiator().getId()) {
             throw new EventUpdateValidException("The initiator is not the current user");
         }
 
-        Category category = getCategoryById(updateEventDto.getCategory());
+        Category category = categoryRepository.getById(updateEventDto.getCategory());
 
         if (eventFromMemory.getState() == EventState.CANCELED) {
             eventFromMemory.setState(EventState.PENDING);
@@ -76,8 +76,8 @@ public class PrivateEventService {
     }
 
     public EventFullDto getEventByEventIdAndUserId(long eventId, long userId) {
-        getUserById(userId);
-        Event event = getEventById(eventId);
+        userRepository.getById(userId);
+        Event event = eventRepository.getById(eventId);
 
         if (userId != event.getInitiator().getId()) {
             throw new EventUpdateValidException("The initiator is not the current user");
@@ -88,11 +88,11 @@ public class PrivateEventService {
     }
 
     public EventFullDto cancelEvent(long eventId, long userId) {
-        Event event = getEventById(eventId);
+        Event event = eventRepository.getById(eventId);
         if (event.getState() != EventState.PENDING) {
             throw new EventUpdateValidException("The event state must be PENDING");
         }
-        getUserById(userId);
+        userRepository.getById(userId);
         if (userId != event.getInitiator().getId()) {
             throw new EventUpdateValidException("The initiator is not the current user");
         }
@@ -104,8 +104,8 @@ public class PrivateEventService {
     }
 
     public List<ParticipationRequestDto> getRequestsByEvent(long eventId, long userId) {
-        Event event = getEventById(eventId);
-        getUserById(userId);
+        Event event = eventRepository.getById(eventId);
+        userRepository.getById(userId);
         if (userId != event.getInitiator().getId()) {
             throw new EventUpdateValidException("The initiator is not the current user");
         }
@@ -117,20 +117,20 @@ public class PrivateEventService {
     }
 
     public ParticipationRequestDto confirmRequest(long eventId, long userId, long reqId) {
-        Event event = getEventById(eventId);
+        Event event = eventRepository.getById(eventId);
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             throw new ConfirmRequestValidException("confirmation of the application is not required");
         }
         if (event.getRequestModeration() && event.getConfirmedRequests() >= event.getParticipantLimit()) {
             throw new ConfirmRequestValidException("This event has exceeded the limit of request");
         }
-        getUserById(userId);
+        userRepository.getById(userId);
         if (userId != event.getInitiator().getId()) {
             throw new EventUpdateValidException("The initiator is not the current user");
         }
         ParticipationRequest request = requestRepository.findParticipationRequestByIdAndEventId(reqId, eventId);
         if (request == null) {
-            throw new NotFoundException("Request with id " + reqId + " for event with id " + eventId + " not found");
+            throw new EntityNotFoundException("Request with id " + reqId + " for event with id " + eventId + " not found");
         }
         request.setStatus(RequestStatus.CONFIRMED);
         requestRepository.save(request);
@@ -146,39 +146,18 @@ public class PrivateEventService {
     }
 
     public ParticipationRequestDto rejectRequest(long eventId, long userId, long reqId) {
-        Event event = getEventById(eventId);
-        getUserById(userId);
+        Event event = eventRepository.getById(eventId);
+        userRepository.getById(userId);
         if (userId != event.getInitiator().getId()) {
             throw new EventUpdateValidException("The initiator is not the current user");
         }
         ParticipationRequest request = requestRepository.findParticipationRequestByIdAndEventId(reqId, eventId);
         if (request == null) {
-            throw new NotFoundException("Request with id " + reqId + " for event with id " + eventId + " not found");
+            throw new EntityNotFoundException("Request with id " + reqId + " for event with id " + eventId + " not found");
         }
         request.setStatus(RequestStatus.REJECTED);
         requestRepository.save(request);
         log.debug("The request with id: {} was rejected", reqId);
         return RequestMapper.toRequestDto(request);
-    }
-
-    private User getUserById(long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id (" + id + ") not found"));
-        log.debug("The user was got by id: {}", id);
-        return user;
-    }
-
-    private Category getCategoryById(long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("The category with id (" + id + ") not found"));
-        log.debug("The category was got by id: {}", id);
-        return category;
-    }
-
-    private Event getEventById(long id) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("The event with id (" + id + ") not found"));
-        log.debug("The event was got by id: {}", id);
-        return event;
     }
 }

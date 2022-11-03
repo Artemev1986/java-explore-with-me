@@ -3,14 +3,15 @@ package ru.yandex.practicum.ewm.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectRetrievalFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.ewm.exception.ApiError;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.exception.ForbiddenException;
 import ru.yandex.practicum.ewm.exception.ValidationException;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class ErrorHandler {
     }
 
   @ExceptionHandler
-  public ResponseEntity<?> handleNotFoundException(final NotFoundException e) {
+  public ResponseEntity<?> handleNotFoundException(final ObjectRetrievalFailureException e) {
       Arrays.stream(e.getStackTrace())
               .map(StackTraceElement::toString)
               .forEach(apiError.getErrors()::add);

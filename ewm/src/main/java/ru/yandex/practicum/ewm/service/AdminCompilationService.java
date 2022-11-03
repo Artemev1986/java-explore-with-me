@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.ewm.dto.CompilationDto;
 import ru.yandex.practicum.ewm.dto.NewCompilationDto;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.CompilationMapper;
 import ru.yandex.practicum.ewm.model.Compilation;
 import ru.yandex.practicum.ewm.model.Event;
@@ -35,7 +34,7 @@ public class AdminCompilationService {
     }
 
     public void deleteCompilationById(long compilationId) {
-        getCompilationById(compilationId);
+        compilationRepository.getById(compilationId);
         compilationRepository.deleteById(compilationId);
         log.debug("The compilation with id: {} was deleted", compilationId);
     }
@@ -47,8 +46,8 @@ public class AdminCompilationService {
     }
 
     public void addEventToCompilation(long compilationId, long eventId) {
-        getCompilationById(compilationId);
-        checkEventById(eventId);
+        compilationRepository.getById(compilationId);
+        eventRepository.getById(eventId);
         EventCompilation eventCompilation = new EventCompilation();
         eventCompilation.setCompilationId(compilationId);
         eventCompilation.setEventId(eventId);
@@ -57,29 +56,16 @@ public class AdminCompilationService {
     }
 
     public void unpinCompilation(long compilationId) {
-        Compilation compilation = getCompilationById(compilationId);
+        Compilation compilation = compilationRepository.getById(compilationId);
         compilation.setPinned(false);
         compilationRepository.save(compilation);
         log.debug("The compilation with id: {} was unpinned", compilationId);
     }
 
     public void pinCompilation(long compilationId) {
-        Compilation compilation = getCompilationById(compilationId);
+        Compilation compilation = compilationRepository.getById(compilationId);
         compilation.setPinned(true);
         compilationRepository.save(compilation);
         log.debug("The compilation with id: {} was pinned", compilationId);
-    }
-
-    private Compilation getCompilationById(long compilationId) {
-        Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() ->  new NotFoundException("The compilation with id (" + compilationId + ") not found"));
-        log.debug("The compilation was got by id: {}", compilationId);
-        return compilation;
-    }
-
-    private void checkEventById(long id) {
-        eventRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("The event with id (" + id + ") not found"));
-        log.debug("The event was got by id: {}", id);
     }
 }

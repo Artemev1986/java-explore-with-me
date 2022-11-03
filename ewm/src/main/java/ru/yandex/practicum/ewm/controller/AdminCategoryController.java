@@ -11,7 +11,7 @@ import ru.yandex.practicum.ewm.service.AdminCategoryService;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/admin/categories")
+@RequestMapping("/admin/categories")
 @Validated
 public class AdminCategoryController {
 

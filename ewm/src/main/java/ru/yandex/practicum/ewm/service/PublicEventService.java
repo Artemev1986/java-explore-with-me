@@ -8,12 +8,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ewm.dto.EventFullDto;
 import ru.yandex.practicum.ewm.dto.EventShortDto;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.EventMapper;
 import ru.yandex.practicum.ewm.model.Event;
 import ru.yandex.practicum.ewm.model.EventState;
 import ru.yandex.practicum.ewm.repository.EventRepository;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -65,7 +65,7 @@ public class PublicEventService {
     public EventFullDto getEventById(long id) {
         Event event = eventRepository.findEventByIdAndState(id, EventState.PUBLISHED);
         if (event == null) {
-            throw new NotFoundException("Published event with id " + id + " not found");
+            throw new EntityNotFoundException("Published event with id " + id + " not found");
         }
         log.debug("Get published event by id: {}", id);
         return EventMapper.toEventFullDto(event);
