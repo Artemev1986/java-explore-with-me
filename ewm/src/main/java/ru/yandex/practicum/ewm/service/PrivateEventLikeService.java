@@ -43,10 +43,23 @@ public class PrivateEventLikeService {
 
         int state = 0;
 
-        if (likeLoaded != null && likeLoaded.getPositive()) {
-            state = 1;
-        } else if (likeLoaded != null && !likeLoaded.getPositive()) {
-            state = 2;
+        if (likeLoaded != null) {
+            boolean isLike = likeLoaded.getPositive();
+            if (isLike && positive) {
+                throw new ValidationException("Like for event id " + eventId +
+                        " from user id " + userId + " already added");
+            }
+
+            if (!isLike && !positive) {
+                throw new ValidationException("Dislike for event id " + eventId +
+                        " from user id " + userId + " already added");
+            }
+
+            if (isLike) {
+                state = 1;
+            } else {
+                state = 2;
+            }
         }
 
         EventLike like = new EventLike();
@@ -56,15 +69,14 @@ public class PrivateEventLikeService {
         eventLikeRepository.save(like);
         User initiator = event.getInitiator();
 
-        if (positive && (state == 2 || state == 0)) {
-            int rating = state == 0 ? 1 : 2;
+        int rating = state == 0 ? 1 : 2;
+        if (positive) {
             event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) + rating);
             initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) + rating);
             eventRepository.save(event);
             userRepository.save(initiator);
             log.debug("Like for event with id {} was added by user with id {}", eventId, userId);
-        } else if (!positive && (state == 1 || state == 0)) {
-            int rating = state == 0 ? 1 : 2;
+        } else {
             event.setRating(Optional.ofNullable(event.getRating()).orElse(0L) - rating);
             initiator.setRating(Optional.ofNullable(initiator.getRating()).orElse(0L) - rating);
             eventRepository.save(event);
@@ -75,16 +87,27 @@ public class PrivateEventLikeService {
         return EventMapper.toEventShortDto(event);
     }
 
-    public EventShortDto removeLikeDislike(Long userId, Long eventId) {
+    public EventShortDto removeLikeDislike(Long userId, Long eventId, boolean positive) {
 
         EventLike likeLoaded = eventLikeRepository.findEventLikeByUserIdAndEventId(userId, eventId);
 
         if (likeLoaded == null) {
-            throw new EntityNotFoundException("Like-dislike for event id " + eventId +
+            throw new EntityNotFoundException("Like or dislike for event id " + eventId +
                     " from user id " + userId + " not found");
         }
 
         boolean state = likeLoaded.getPositive();
+
+        if (!state && positive) {
+            throw new EntityNotFoundException("Like for event id " + eventId +
+                    " from user id " + userId + " not found");
+        }
+
+        if (state && !positive) {
+            throw new EntityNotFoundException("Dislike for event id " + eventId +
+                    " from user id " + userId + " not found");
+        }
+
         eventLikeRepository.delete(likeLoaded);
 
         Event event = eventRepository.getById(eventId);

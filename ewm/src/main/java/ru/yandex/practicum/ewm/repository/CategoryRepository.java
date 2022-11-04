@@ -8,8 +8,8 @@ import javax.persistence.EntityNotFoundException;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     default Category getById(Long id) {
-        return findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Category with id (" + id + ") not found")
+        return findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Category with id (" + id + ") not found"))
         );
     }
 }

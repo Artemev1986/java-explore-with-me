@@ -34,7 +34,7 @@ public class PrivateEventLikeController {
     public ResponseEntity<Object> removeLike(
             @PathVariable Long userId,
             @PathVariable Long eventId) {
-        EventShortDto eventShortDto = eventLikeService.removeLikeDislike(userId, eventId);
+        EventShortDto eventShortDto = eventLikeService.removeLikeDislike(userId, eventId, true);
         return new ResponseEntity<>(eventShortDto, HttpStatus.OK);
     }
 
@@ -42,7 +42,7 @@ public class PrivateEventLikeController {
     public ResponseEntity<Object> removeDislike(
             @PathVariable Long userId,
             @PathVariable Long eventId) {
-        EventShortDto eventShortDto = eventLikeService.removeLikeDislike(userId, eventId);
+        EventShortDto eventShortDto = eventLikeService.removeLikeDislike(userId, eventId, false);
         return new ResponseEntity<>(eventShortDto, HttpStatus.OK);
     }
 }
