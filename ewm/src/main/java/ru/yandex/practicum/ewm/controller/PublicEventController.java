@@ -84,4 +84,11 @@ public class PublicEventController {
 
         return new ResponseEntity<>(eventService.getEventById(id), HttpStatus.OK);
     }
+
+    @GetMapping("/rating")
+    public ResponseEntity<Object> getEvents(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                            @Positive @RequestParam(defaultValue = "10") Integer size) {
+        List<EventShortDto> events = eventService.getEvents(from, size);
+        return new ResponseEntity<>(events, HttpStatus.OK);
+    }
 }

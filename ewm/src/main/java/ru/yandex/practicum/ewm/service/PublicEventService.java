@@ -70,4 +70,13 @@ public class PublicEventService {
         log.debug("Get published event by id: {}", id);
         return EventMapper.toEventFullDto(event);
     }
+
+
+    public List<EventShortDto> getEvents(int from, int size) {
+        Pageable page = PageRequest.of(from / size, size, Sort.by("rating").descending());
+        List<EventShortDto> events = eventRepository
+                .findAll(page).getContent().stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
+        log.debug("Get events. Events counts: {}", events.size());
+        return events;
+    }
 }

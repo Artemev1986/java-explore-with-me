@@ -34,15 +34,15 @@ public class PrivateEventLikeController {
     public ResponseEntity<Object> removeLike(
             @PathVariable Long userId,
             @PathVariable Long eventId) {
-        eventLikeService.removeLikeDislike(userId, eventId);
-        return ResponseEntity.ok().build();
+        EventShortDto eventShortDto = eventLikeService.removeLikeDislike(userId, eventId);
+        return new ResponseEntity<>(eventShortDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/dislike")
     public ResponseEntity<Object> removeDislike(
             @PathVariable Long userId,
             @PathVariable Long eventId) {
-        eventLikeService.removeLikeDislike(userId, eventId);
-        return ResponseEntity.ok().build();
+        EventShortDto eventShortDto = eventLikeService.removeLikeDislike(userId, eventId);
+        return new ResponseEntity<>(eventShortDto, HttpStatus.OK);
     }
 }

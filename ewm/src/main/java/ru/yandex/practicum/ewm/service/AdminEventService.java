@@ -77,6 +77,7 @@ public class AdminEventService {
                     "the date of publication");
         }
 
+        event.setPublishedOn(LocalDateTime.now());
         event.setState(EventState.PUBLISHED);
         eventRepository.save(event);
 

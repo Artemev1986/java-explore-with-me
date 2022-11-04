@@ -27,6 +27,7 @@ public class UserMapper {
         User user = new User();
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
+        user.setRating(0L);
         return user;
     }
 }

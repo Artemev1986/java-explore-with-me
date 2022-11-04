@@ -58,12 +58,12 @@ public class PrivateRequestService {
         request.setEventId(eventId);
         request.setRequesterId(userId);
 
-        if (!event.getRequestModeration()) {
+        request.setStatus(RequestStatus.PENDING);
+
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             request.setStatus(RequestStatus.CONFIRMED);
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
-
-        request.setStatus(RequestStatus.PENDING);
 
         eventRepository.save(event);
         requestRepository.save(request);

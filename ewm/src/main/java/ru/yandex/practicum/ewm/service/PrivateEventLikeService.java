@@ -75,7 +75,7 @@ public class PrivateEventLikeService {
         return EventMapper.toEventShortDto(event);
     }
 
-    public void removeLikeDislike(Long userId, Long eventId) {
+    public EventShortDto removeLikeDislike(Long userId, Long eventId) {
 
         EventLike likeLoaded = eventLikeRepository.findEventLikeByUserIdAndEventId(userId, eventId);
 
@@ -103,6 +103,7 @@ public class PrivateEventLikeService {
             userRepository.save(initiator);
             log.debug("Dislike for event with id {} was deleted by user with id {}", eventId, userId);
         }
+        return EventMapper.toEventShortDto(event);
     }
 
     private ParticipationRequest getRequestByRequestorIdAndEventId(long requestorId, long eventId) {
