@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.ewm.dto.EventFullDto;
 import ru.yandex.practicum.ewm.dto.EventShortDto;
 import ru.yandex.practicum.ewm.mapper.EventMapper;
@@ -62,11 +63,13 @@ public class PublicEventService {
         return eventsDto;
     }
 
+    @Transactional
     public EventFullDto getEventById(long id) {
         Event event = eventRepository.findEventByIdAndState(id, EventState.PUBLISHED);
         if (event == null) {
             throw new EntityNotFoundException("Published event with id " + id + " not found");
         }
+        event.setViews(event.getViews() + 1);
         log.debug("Get published event by id: {}", id);
         return EventMapper.toEventFullDto(event);
     }
