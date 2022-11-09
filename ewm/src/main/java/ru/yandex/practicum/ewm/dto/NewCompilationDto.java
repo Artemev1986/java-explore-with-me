@@ -14,6 +14,6 @@ public class NewCompilationDto {
     String title;
     @NotNull(message = "{pinned.notnull}")
     Boolean pinned;
-    @NotEmpty(message = "{events.notempty}")
+    @NotNull(message = "{events.notnull}")
     List<Long> events = new ArrayList<>();
 }

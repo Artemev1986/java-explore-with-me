@@ -22,7 +22,7 @@ public class AdminUserController {
     private final AdminUserService userService;
 
     @PostMapping
-    public ResponseEntity<Object> addUser(@RequestBody NewUserRequest userDto) {
+    public ResponseEntity<Object> addUser(@RequestBody @Validated NewUserRequest userDto) {
         return new ResponseEntity<>(userService.addUser(userDto), HttpStatus.OK);
     }
 

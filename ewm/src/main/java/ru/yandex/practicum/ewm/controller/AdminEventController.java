@@ -28,9 +28,9 @@ public class AdminEventController {
 
     @GetMapping
     public ResponseEntity<Object> getEvents(
-            @RequestParam List<Long> users,
-            @RequestParam List<String> states,
-            @RequestParam List<Long> categories,
+            @RequestParam(required = false) List<Long> users,
+            @RequestParam(required = false) List<String> states,
+            @RequestParam(required = false) List<Long> categories,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime rangeStart,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -38,15 +38,18 @@ public class AdminEventController {
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
             @Positive @RequestParam(defaultValue = "10") Integer size) {
 
-        List<EventState> eventStates = new ArrayList<>();
+        List<EventState> eventStates = null;
         String eventState = "";
-        try {
-            for (String state: states) {
-                eventState = state;
-                eventStates.add(EventState.valueOf(state));
+        if (states != null) {
+            try {
+                for (String state : states) {
+                    eventState = state;
+                    eventStates = new ArrayList<>();
+                    eventStates.add(EventState.valueOf(state));
+                }
+            } catch (IllegalArgumentException e) {
+                throw new ForbiddenException("Unknown state: " + eventState);
             }
-        } catch (IllegalArgumentException e) {
-            throw new ForbiddenException("Unknown state: " + eventState);
         }
 
         List<EventFullDto> eventDtoList = adminEventService.getEvents(

@@ -28,7 +28,7 @@ public class PublicEventService {
 
     public List<EventShortDto> searchPublishedEvents(String text,
                                                      List<Long> categories,
-                                                     boolean paid,
+                                                     Boolean paid,
                                                      LocalDateTime rangeStart,
                                                      LocalDateTime rangeEnd,
                                                      boolean onlyAvailable,
@@ -46,7 +46,7 @@ public class PublicEventService {
         Pageable page = PageRequest.of(from / size, size, Sort.by(sortParameter).ascending());
 
         LocalDateTime start = rangeStart == null ? LocalDateTime.now() : rangeStart;
-        LocalDateTime end = rangeEnd == null ? LocalDateTime.MAX : rangeEnd;
+        LocalDateTime end = rangeEnd == null ? LocalDateTime.now().plusYears(9999): rangeEnd;
 
         List<EventShortDto> eventsDto = eventRepository.searchEventByText(
                 text,

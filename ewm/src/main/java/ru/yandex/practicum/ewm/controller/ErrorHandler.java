@@ -26,7 +26,7 @@ public class ErrorHandler {
               .map(StackTraceElement::toString)
               .forEach(apiError.getErrors()::add);
       apiError.setMessage(e.getMessage());
-      apiError.setReason("");
+      apiError.setReason("Bad request");
       apiError.setStatus("BAD_REQUEST");
       apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
       log.warn(String.valueOf(e));
@@ -52,7 +52,7 @@ public class ErrorHandler {
               .map(StackTraceElement::toString)
               .forEach(apiError.getErrors()::add);
       apiError.setMessage(e.getMessage());
-      apiError.setReason("");
+      apiError.setReason("Required object not found");
       apiError.setStatus("NOT_FOUND");
       apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
       log.warn(String.valueOf(e));

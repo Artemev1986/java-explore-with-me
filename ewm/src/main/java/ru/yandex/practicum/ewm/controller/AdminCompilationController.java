@@ -3,6 +3,7 @@ package ru.yandex.practicum.ewm.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.ewm.dto.CompilationDto;
 import ru.yandex.practicum.ewm.dto.NewCompilationDto;
@@ -11,12 +12,13 @@ import ru.yandex.practicum.ewm.service.AdminCompilationService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/compilations")
+@Validated
 public class AdminCompilationController {
 
     private final AdminCompilationService compilationService;
 
     @PostMapping
-    public ResponseEntity<Object> addCompilation(@RequestBody NewCompilationDto newCompilationDto) {
+    public ResponseEntity<Object> addCompilation(@RequestBody @Validated NewCompilationDto newCompilationDto) {
         CompilationDto compilationDto = compilationService.addCompilation(newCompilationDto);
         return new ResponseEntity<>(compilationDto, HttpStatus.OK);
     }

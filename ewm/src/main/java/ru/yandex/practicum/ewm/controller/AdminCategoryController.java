@@ -18,12 +18,12 @@ public class AdminCategoryController {
     private final AdminCategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Object> addCategory(@RequestBody NewCategoryDto categoryDto) {
+    public ResponseEntity<Object> addCategory(@RequestBody @Validated NewCategoryDto categoryDto) {
         return new ResponseEntity<>(categoryService.addCategory(categoryDto), HttpStatus.OK);
     }
 
     @PatchMapping
-    public ResponseEntity<Object> updateCategory(@RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<Object> updateCategory(@RequestBody @Validated CategoryDto categoryDto) {
         return new ResponseEntity<>(categoryService.updateCategory(categoryDto), HttpStatus.OK);
     }
 

@@ -37,7 +37,7 @@ public class AdminEventService {
         Pageable page = PageRequest.of(from / size, size);
 
         LocalDateTime start = rangeStart == null ? LocalDateTime.now() : rangeStart;
-        LocalDateTime end = rangeEnd == null ? LocalDateTime.MAX : rangeEnd;
+        LocalDateTime end = rangeEnd == null ? LocalDateTime.now().plusYears(9999) : rangeEnd;
 
         List<EventFullDto> eventsDto = eventRepository.getEventsAdmin(
                 users,
