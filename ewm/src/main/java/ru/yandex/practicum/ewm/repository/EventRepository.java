@@ -15,7 +15,7 @@ import java.util.Set;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    @Query("SELECT ev FROM Event ev WHERE " +
+    @Query("SELECT ev FROM Event ev JOIN FETCH ev.category  JOIN FETCH ev.initiator JOIN FETCH ev.location WHERE " +
             "(FALSE = :onlyAvailable OR (ev.confirmedRequests < ev.participantLimit) AND TRUE = :onlyAvailable " +
             "OR ev.participantLimit = 0) " +
             "AND (:categories IS NULL OR ev.category.id IN :categories AND :categories IS NOT NULL)  " +
@@ -36,9 +36,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Event findEventByIdAndState(long id, EventState state);
 
+    @Query("SELECT ev FROM Event ev JOIN FETCH ev.category JOIN FETCH ev.initiator JOIN FETCH ev.location " +
+            "WHERE ev.initiator = :initiator")
     List<Event> findEventsByInitiator(User initiator, Pageable page);
 
-    @Query("SELECT ev FROM Event ev WHERE " +
+    @Query("SELECT ev FROM Event ev JOIN FETCH ev.category  JOIN FETCH ev.initiator JOIN FETCH ev.location WHERE " +
             "(:users IS NULL OR ev.initiator.id IN :users  AND :users IS NOT NULL) " +
             "AND (:states IS NULL OR ev.state IN :states AND :states IS NOT NULL) " +
             "AND (:categories IS NULL OR ev.category.id IN :categories AND :categories IS NOT NULL)  " +
@@ -52,8 +54,12 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                LocalDateTime rangeEnd,
                                Pageable page);
 
-    @Query("SELECT ev FROM Event ev WHERE ev.id IN :events")
+    @Query("SELECT ev FROM Event ev JOIN FETCH ev.category JOIN FETCH ev.initiator JOIN FETCH ev.location " +
+            "WHERE ev.id IN :events")
     Set<Event> getEventsForCompilation(List<Long> events);
+
+    @Query("SELECT ev FROM Event ev JOIN FETCH ev.category JOIN FETCH ev.initiator JOIN FETCH ev.location")
+    List<Event> getEvents(Pageable page);
 
     default Event getById(Long id) {
         return findById(id).orElseThrow(

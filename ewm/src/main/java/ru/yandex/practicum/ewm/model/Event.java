@@ -29,8 +29,9 @@ public class Event extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
+    @ToString.Exclude
     private Location location;
     @Column(name = "is_paid", nullable = false)
     private Boolean paid;

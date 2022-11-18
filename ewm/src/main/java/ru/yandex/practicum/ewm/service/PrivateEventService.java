@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.ewm.dto.*;
 import ru.yandex.practicum.ewm.exception.ConfirmRequestValidException;
 import ru.yandex.practicum.ewm.exception.EventUpdateValidException;
@@ -30,6 +31,7 @@ public class PrivateEventService {
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
 
+    @Transactional
     public List<EventShortDto> getEventsByUserId(long userId, int from, int size) {
         User user = userRepository.getById(userId);
         Pageable page = PageRequest.of(from / size, size);
@@ -40,6 +42,7 @@ public class PrivateEventService {
         return eventsDto;
     }
 
+    @Transactional
     public EventFullDto addEvent(long userId, NewEventDto newEventDto) {
         User initiator = userRepository.getById(userId);
         Category category = categoryRepository.getById(newEventDto.getCategory());
@@ -49,6 +52,7 @@ public class PrivateEventService {
         return EventMapper.toEventFullDto(event);
     }
 
+    @Transactional
     public EventFullDto updateEvent(long userId, UpdateEventRequest updateEventDto) {
         Event eventFromMemory = eventRepository.getById(updateEventDto.getEventId());
         if (!(eventFromMemory.getState() == EventState.PENDING || eventFromMemory.getState() == EventState.CANCELED)) {
@@ -68,13 +72,14 @@ public class PrivateEventService {
         }
 
         Event event = EventMapper.updateEvent(eventFromMemory, updateEventDto, category);
-        eventRepository.save(event);
+        //eventRepository.save(event);
 
         log.debug("Event with id: {} was updated", event.getId());
 
         return EventMapper.toEventFullDto(event);
     }
 
+    @Transactional
     public EventFullDto getEventByEventIdAndUserId(long eventId, long userId) {
         userRepository.getById(userId);
         Event event = eventRepository.getById(eventId);
@@ -86,6 +91,7 @@ public class PrivateEventService {
         log.debug("Got the event with eventId: {} added by the user with id: {}", eventId, userId);
         return EventMapper.toEventFullDto(event);
     }
+
 
     public EventFullDto cancelEvent(long eventId, long userId) {
         Event event = eventRepository.getById(eventId);
