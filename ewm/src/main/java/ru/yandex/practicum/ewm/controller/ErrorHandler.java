@@ -67,9 +67,9 @@ public class ErrorHandler {
                 .forEach(apiError.getErrors()::add);
         apiError.setMessage(e.getMessage());
         apiError.setReason("SQL exception");
-        apiError.setStatus("INTERNAL_SERVER_ERROR");
+        apiError.setStatus("CONFLICT");
         apiError.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         log.warn(String.valueOf(e));
-        return new ResponseEntity<>(apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(apiError, HttpStatus.CONFLICT);
     }
 }
