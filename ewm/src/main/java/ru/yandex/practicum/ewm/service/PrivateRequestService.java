@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ewm.dto.ParticipationRequestDto;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.exception.ValidationException;
 import ru.yandex.practicum.ewm.mapper.RequestMapper;
+import ru.yandex.practicum.ewm.model.Event;
+import ru.yandex.practicum.ewm.model.EventState;
+import ru.yandex.practicum.ewm.model.ParticipationRequest;
+import ru.yandex.practicum.ewm.model.RequestStatus;
 import ru.yandex.practicum.ewm.repository.EventRepository;
 import ru.yandex.practicum.ewm.repository.RequestRepository;
 import ru.yandex.practicum.ewm.repository.UserRepository;
-import ru.yandex.practicum.ewm.model.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,7 +28,8 @@ public class PrivateRequestService {
     private final RequestRepository requestRepository;
 
     public List<ParticipationRequestDto> getRequestsByRequestor(long userId) {
-        getUserById(userId);
+        userRepository.getById(userId);
+
         List<ParticipationRequestDto> requests = requestRepository.findAllByRequesterId(userId)
                 .stream().map(RequestMapper::toRequestDto).collect(Collectors.toList());
         log.debug("Requests had got for user with id: {}. Requests counts: {}", userId, requests.size());
@@ -34,7 +37,7 @@ public class PrivateRequestService {
     }
 
     public ParticipationRequestDto addRequest(long userId, long eventId) {
-        Event event = getEventById(eventId);
+        Event event = eventRepository.getById(eventId);
         if (!(event.getState() == EventState.PUBLISHED)) {
             throw new ValidationException("The event state not PUBLISHED");
         }
@@ -44,7 +47,7 @@ public class PrivateRequestService {
             throw new ValidationException("This event has exceeded the limit of request");
         }
 
-        getUserById(userId);
+        userRepository.getById(userId);
 
         if (userId == event.getInitiator().getId()) {
             throw new ValidationException("The event initiator can't add a request to participate in this event");
@@ -55,12 +58,12 @@ public class PrivateRequestService {
         request.setEventId(eventId);
         request.setRequesterId(userId);
 
-        if (!event.getRequestModeration()) {
+        request.setStatus(RequestStatus.PENDING);
+
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             request.setStatus(RequestStatus.CONFIRMED);
             event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         }
-
-        request.setStatus(RequestStatus.PENDING);
 
         eventRepository.save(event);
         requestRepository.save(request);
@@ -71,9 +74,9 @@ public class PrivateRequestService {
     }
 
     public ParticipationRequestDto canceledRequest(long userId, long requestId) {
-        getUserById(userId);
+        userRepository.getById(userId);
 
-        ParticipationRequest request = getRequestById(requestId);
+        ParticipationRequest request = requestRepository.getById(requestId);
         if (userId != request.getRequesterId()) {
             throw new ValidationException("The current user can't cancel this request");
         }
@@ -85,26 +88,5 @@ public class PrivateRequestService {
         log.debug("The request with id: {} was canceled", requestId);
 
         return RequestMapper.toRequestDto(request);
-    }
-
-    private User getUserById(long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id (" + id + ") not found"));
-        log.debug("The user was got by id: {}", id);
-        return user;
-    }
-
-    private Event getEventById(long id) {
-        Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("The event with id (" + id + ") not found"));
-        log.debug("The event was got by id: {}", id);
-        return event;
-    }
-
-    private ParticipationRequest getRequestById(long id) {
-        ParticipationRequest request = requestRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("The request with id (" + id + ") not found"));
-        log.debug("The request was got by id: {}", id);
-        return request;
     }
 }

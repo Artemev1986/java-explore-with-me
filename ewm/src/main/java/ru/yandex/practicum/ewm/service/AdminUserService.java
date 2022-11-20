@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ewm.dto.NewUserRequest;
 import ru.yandex.practicum.ewm.dto.UserDto;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.UserMapper;
 import ru.yandex.practicum.ewm.model.User;
 import ru.yandex.practicum.ewm.repository.UserRepository;
@@ -30,7 +29,7 @@ public class AdminUserService {
     }
 
     public void deleteUserById(long userId) {
-        getUserById(userId);
+        userRepository.getById(userId);
         userRepository.deleteById(userId);
         log.debug("User with id ({}) was deleted", userId);
     }
@@ -41,12 +40,5 @@ public class AdminUserService {
                 .stream().map(UserMapper::toUserDto).collect(Collectors.toList());
         log.debug("Get users. Current user counts: {}", usersDto.size());
         return usersDto;
-    }
-
-    private User getUserById(long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id (" + id + ") not found"));
-        log.debug("User get by id: {}", id);
-        return user;
     }
 }

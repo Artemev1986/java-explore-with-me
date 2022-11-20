@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/compilations")
+@RequestMapping("/compilations")
 @Validated
 public class PublicCompilationController {
 

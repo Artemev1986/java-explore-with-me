@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import ru.yandex.practicum.ewm.model.ParticipationRequest;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 public interface RequestRepository extends JpaRepository<ParticipationRequest, Long> {
@@ -19,4 +20,12 @@ public interface RequestRepository extends JpaRepository<ParticipationRequest, L
     long updateEventRequests(long eventId);
 
     List<ParticipationRequest> findAllByRequesterId(long requesterId);
+
+    ParticipationRequest findParticipationRequestByRequesterIdAndEventId(Long requestorId, Long eventId);
+
+    default ParticipationRequest getById(Long id) {
+        return findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("The request with id (" + id + ") not found"))
+        );
+    }
 }

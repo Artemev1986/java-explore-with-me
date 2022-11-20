@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/users/{userId}/events")
+@RequestMapping("/users/{userId}/events")
 @Validated
 public class PrivateEventController {
 
@@ -48,7 +48,7 @@ public class PrivateEventController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> addEvent(@RequestBody NewEventDto newEventDto, @PathVariable Long userId) {
+    public ResponseEntity<Object> addEvent(@RequestBody @Validated NewEventDto newEventDto, @PathVariable Long userId) {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidationException("Event date is not valid");
         }

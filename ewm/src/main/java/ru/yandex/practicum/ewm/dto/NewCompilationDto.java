@@ -3,7 +3,6 @@ package ru.yandex.practicum.ewm.dto;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +13,6 @@ public class NewCompilationDto {
     String title;
     @NotNull(message = "{pinned.notnull}")
     Boolean pinned;
-    @NotEmpty(message = "{events.notempty}")
+    @NotNull(message = "{events.notnull}")
     List<Long> events = new ArrayList<>();
 }

@@ -18,7 +18,7 @@ public class AdminCompilationController {
     private final AdminCompilationService compilationService;
 
     @PostMapping
-    public ResponseEntity<Object> addCompilation(@RequestBody NewCompilationDto newCompilationDto) {
+    public ResponseEntity<Object> addCompilation(@RequestBody @Validated NewCompilationDto newCompilationDto) {
         CompilationDto compilationDto = compilationService.addCompilation(newCompilationDto);
         return new ResponseEntity<>(compilationDto, HttpStatus.OK);
     }

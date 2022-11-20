@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.ewm.dto.CompilationDto;
-import ru.yandex.practicum.ewm.exception.NotFoundException;
 import ru.yandex.practicum.ewm.mapper.CompilationMapper;
 import ru.yandex.practicum.ewm.model.Compilation;
 import ru.yandex.practicum.ewm.repository.CompilationRepository;
@@ -30,8 +29,7 @@ public class PublicCompilationService {
     }
 
     public CompilationDto getCompilationById(long compilationId) {
-        Compilation compilation = compilationRepository.findById(compilationId)
-                .orElseThrow(() ->  new NotFoundException("The compilation with id (" + compilationId + ") not found"));
+        Compilation compilation = compilationRepository.getById(compilationId);
         log.debug("The compilation was got by id: {}", compilationId);
         return CompilationMapper.toCompilationDto(compilation);
     }

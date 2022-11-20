@@ -46,6 +46,7 @@ The closed part of the API is designed to implement the capabilities of register
 1. Authorized users have the ability to add new events to the application, edit them and view them after they are added.
 2. It is possible to apply for participation in events of interest.
 3. The creator of the event can confirm requests submitted by other users of the service.
+4. The event participant can like or dislike the event. An event can only be evaluated after it has been completed.
 
 ### API features for administrator
 The administrative part of the API provides the ability to configure and maintain the service.

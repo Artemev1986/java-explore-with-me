@@ -1,8 +1,6 @@
 package ru.yandex.practicum.ewm.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -31,8 +29,9 @@ public class Event extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "initiator_id")
     private User initiator;
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
+    @ToString.Exclude
     private Location location;
     @Column(name = "is_paid", nullable = false)
     private Boolean paid;
@@ -47,4 +46,6 @@ public class Event extends BaseEntity {
     private EventState state;
     @Column(name = "views", nullable = false)
     private Long views;
+    @Column(name = "rating")
+    private Long rating;
 }

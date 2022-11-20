@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "/events")
+@RequestMapping("/events")
 @Validated
 public class PublicEventController {
 
@@ -30,15 +30,15 @@ public class PublicEventController {
 
     @GetMapping
     public ResponseEntity<Object> searchPublishedEvents(
-            @RequestParam String text,
-            @RequestParam List<Long> categories,
-            @RequestParam Boolean paid,
-            @RequestParam Boolean onlyAvailable,
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) List<Long> categories,
+            @RequestParam(required = false) Boolean paid,
+            @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime rangeStart,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "yyyy-MM-dd HH:mm:ss")
             @RequestParam(required = false) LocalDateTime rangeEnd,
-            @RequestParam String sort,
+            @RequestParam(required = false, defaultValue = "EVENT_DATE") String sort,
             @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
             @Positive @RequestParam(name = "size", defaultValue = "10") Integer size,
             HttpServletRequest request) {
@@ -83,5 +83,12 @@ public class PublicEventController {
         statClient.create(endpointHitDto);
 
         return new ResponseEntity<>(eventService.getEventById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/rating")
+    public ResponseEntity<Object> getEvents(@PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                            @Positive @RequestParam(defaultValue = "10") Integer size) {
+        List<EventShortDto> events = eventService.getEvents(from, size);
+        return new ResponseEntity<>(events, HttpStatus.OK);
     }
 }
